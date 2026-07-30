@@ -1,25 +1,32 @@
-import {expect, test} from 'vitest'
+import {describe, expect, it} from 'vitest'
 import { AnswerQuestion } from '#/domain/forum/application/use-cases/answer-question'
-import type { AnswersRepository } from '#/domain/forum/application/repositories/answer-repository'
-import type { Answer } from '#/domain/forum/enterprise/entities/answer'
+import { beforeEach } from 'vitest'
+import { InMemoryAnswersRepository } from '../../../../../test/repositories/in-memory-answers-repository.js'
 
-const fakeAnswersRepository: AnswersRepository = {
-    create: async (answer: Answer) => {
-        return answer
-    }
-}
+let inMemoryAnswersRepository: InMemoryAnswersRepository 
+let sut: AnswerQuestion
 
-test('Create an answer', async () => {
-    const answerQuestion = new AnswerQuestion(fakeAnswersRepository)
+describe('answer Question', () => {
 
-    const answer = await answerQuestion.execute({
-        instructorId: '1',
-        questionId: '1',
-        content: "Answering",
+    beforeEach(() => {
+        inMemoryAnswersRepository = new InMemoryAnswersRepository()
+        sut = new AnswerQuestion(inMemoryAnswersRepository)
+        
+    })
+
+    it('Should be able to answer a question', async () => {   
+    const {answer} = await sut.execute({
+            instructorId: '1',
+            questionId: '1',
+            content: 'answering',
+    })
+
+    expect(answer.id).toBeTruthy()
+    expect(inMemoryAnswersRepository.items[0]?.id).toEqual(answer.id)
+    expect(answer.content).toEqual('answering')
+
 
     })
 
-    expect(answer.content).toEqual("Answering")
+}) 
 
-
-})

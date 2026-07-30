@@ -2,12 +2,16 @@ import { UniqueEntityId } from "#/core/entities/unique-entity-id";
 import { Answer } from "#/domain/forum/enterprise/entities/answer";
 import type { AnswersRepository } from "#/domain/forum/application/repositories/answer-repository";
 
-interface AnswerQuestionInterface {
+interface AnswerQuestionRequest {
 
     instructorId: string
     questionId: string
     content: string
 
+}
+
+interface AnswerQuestionResponse {
+    answer: Answer
 }
 
 export class AnswerQuestion{
@@ -16,7 +20,7 @@ export class AnswerQuestion{
         private answersRepository: AnswersRepository
     ) {}
     
-    async execute({instructorId, questionId, content}: AnswerQuestionInterface) {
+    async execute({instructorId, questionId, content}: AnswerQuestionRequest):Promise<AnswerQuestionResponse> {
         const answer = Answer.create({
             content,
             authorId: new UniqueEntityId(instructorId),
@@ -25,7 +29,7 @@ export class AnswerQuestion{
         await this.answersRepository.create(answer)
 
         
-        return answer
+        return {answer}
     }
 }
 

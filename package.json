@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Design dirigindo à domínio",
   "main": "index.js",
+  "imports": {
+    "#/*": "./src/*.js"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest"

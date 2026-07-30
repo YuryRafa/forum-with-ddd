@@ -1,7 +1,7 @@
-import { Slug } from "./value-objects/slug.js"
-import { Entity } from "../../../../core/entities/entity.js"
-import type { UniqueEntityId } from "../../../../core/entities/unique-entity-id.js"
-import type { Optional } from "../../../../core/types/optional.js"
+import { Slug } from "#/domain/forum/enterprise/entities/value-objects/slug"
+import { Entity } from "#/core/entities/entity"
+import type { UniqueEntityId } from "#/core/entities/unique-entity-id"
+import type { Optional } from "#/core/types/optional"
 import dayjs from "dayjs"
 
 interface QuestionProps {
@@ -49,7 +49,7 @@ export class Question extends Entity<QuestionProps>{
     }
 
     get excerpt() {
-        return this.content.substring(0, 120).trimEnd(). concat('...')
+        return this.content.substring(0, 120).trimEnd().concat('...')
     }
 
     private touch() {
@@ -82,6 +82,8 @@ export class Question extends Entity<QuestionProps>{
             createdAt: new Date(),
             slug: props.slug ?? Slug.createFromText(props.title)
         }, id)
+
+        return question
     }
 
 }

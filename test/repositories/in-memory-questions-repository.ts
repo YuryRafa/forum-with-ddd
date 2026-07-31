@@ -14,7 +14,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
         return question ?? null
     }
 
-    async findByid(questionId: string): Promise<Question | null> {
+    async findById(questionId: string): Promise<Question | null> {
         const question = this.items.find(item => item.id.toString() == questionId)
         return question ?? null
     }

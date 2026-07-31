@@ -31,8 +31,11 @@ describe('Edit Question', () => {
         title: 'new title'
     })
 
-    expect(question.content).toEqual('new content')
-    expect(question.title).toEqual('new title')
+    expect(inMemoryQuestionsRepository.items[0]).toMatchObject({
+        title: 'new title',
+        content: 'new content'
+    })
+
 
     })
 

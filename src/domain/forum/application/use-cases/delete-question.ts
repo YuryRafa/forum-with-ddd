@@ -15,7 +15,7 @@ export class DeleteQuestion{
     ) {}
     
     async execute({authorId, questionId}: DeleteQuestionRequest): Promise<DeleteQuestionResponse> {
-        const question = await this.questionsRepository.findByid(questionId)
+        const question = await this.questionsRepository.findById(questionId)
 
         if (!question){
             throw new Error('Question not found')

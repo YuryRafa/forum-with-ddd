@@ -20,7 +20,7 @@ export class EditQuestion{
     ) {}
     
     async execute({authorId, questionId, content, title}: EditQuestionRequest): Promise<EditQuestionResponse> {
-        const question = await this.questionsRepository.findByid(questionId)
+        const question = await this.questionsRepository.findById(questionId)
 
         if (!question){
             throw new Error('Question not found')

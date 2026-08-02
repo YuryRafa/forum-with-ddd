@@ -1,4 +1,5 @@
-import type { QuestionsRepository } from "../../src/domain/forum/application/repositories/question-repository.js";
+import type { PaginationParams } from "../../src/core/repositories/pagination-params.js";
+import type { QuestionsRepository } from "../../src/domain/forum/application/repositories/questions-repository.js";
 import type { Question } from "../../src/domain/forum/enterprise/entities/question.js";
 
 export class InMemoryQuestionsRepository implements QuestionsRepository {
@@ -25,8 +26,13 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
             return
         }
         this.items.splice(foundIndex, 1)
+    }
 
-        
+    async findManyRecent({page}: PaginationParams): Promise<Question[]> {
+        const questions = this.items
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .slice((page - 1) * 20, page * 20)
+        return questions
     }
 
     async save(question: Question): Promise<Question> {

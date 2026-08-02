@@ -1,8 +1,8 @@
 import { UniqueEntityId } from "#/core/entities/unique-entity-id";
 import { Answer } from "#/domain/forum/enterprise/entities/answer";
-import type { AnswersRepository } from "#/domain/forum/application/repositories/answer-repository";
+import type { AnswersRepository } from "../repositories/answers-repository.js";
 import type { Question } from "../../enterprise/entities/question.js";
-import type { QuestionsRepository } from "../repositories/question-repository.js";
+import type { QuestionsRepository } from "../repositories/questions-repository.js";
 
 interface ChooseBestAsnwerRequest {
     answerId: string

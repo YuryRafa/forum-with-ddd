@@ -1,4 +1,4 @@
-import type { AnswersRepository } from "#/domain/forum/application/repositories/answer-repository";
+import type { AnswersRepository } from "../repositories/answers-repository.js";
 
 interface DeleteAnswerRequest {
     authorId: string

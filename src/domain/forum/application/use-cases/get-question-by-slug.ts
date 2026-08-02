@@ -1,5 +1,5 @@
 import type { Question } from "#/domain/forum/enterprise/entities/question";
-import type { QuestionsRepository } from "#/domain/forum/application/repositories/question-repository";
+import type { QuestionsRepository } from "../repositories/questions-repository.js";
 
 interface GetQuestionBySlugRequest {
     slug: string

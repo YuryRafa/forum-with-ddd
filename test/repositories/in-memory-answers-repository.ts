@@ -1,4 +1,5 @@
-import type { AnswersRepository } from "../../src/domain/forum/application/repositories/answer-repository.js";
+import type { PaginationParams } from "../../src/core/repositories/pagination-params.js";
+import type { AnswersRepository } from "../../src/domain/forum/application/repositories/answers-repository.js";
 import type { Answer } from "../../src/domain/forum/enterprise/entities/answer.js";
 
 
@@ -14,6 +15,14 @@ export class InMemoryAnswersRepository implements AnswersRepository {
     async findById(answerId: string): Promise<Answer | null> {
         const answer = this.items.find(item => item.id.toString() == answerId)
         return answer ?? null
+    }
+
+    async getAllAnswersById(questionId: string, {page}: PaginationParams): Promise<Answer[]> {
+        const questions = this.items
+            .filter((item) => item.questionId.toString() === questionId)
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .slice((page - 1) * 20, page * 20)
+        return questions
     }
     
     async save(answer: Answer): Promise<Answer> {

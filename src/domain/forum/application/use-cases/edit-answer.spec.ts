@@ -18,22 +18,22 @@ describe('Edit answer', () => {
     })
 
     it('Should be able to get edit a answer by its id', async () => {
-    const answer = makeAnswer({
-        authorId: new UniqueEntityId('author-1'),
-        questionId: new UniqueEntityId('question-1')
-    }, new UniqueEntityId('answer-1'))
+        const answer = makeAnswer({
+            authorId: new UniqueEntityId('author-1'),
+            questionId: new UniqueEntityId('question-1')
+        }, new UniqueEntityId('answer-1'))
 
-    await inMemoryAnswersRepository.create(answer)
-    
-    await sut.execute({
-        answerId: 'answer-1',
-        authorId:'author-1',
-        content: 'new content',
-    })
+        await inMemoryAnswersRepository.create(answer)
+        
+        await sut.execute({
+            answerId: 'answer-1',
+            authorId:'author-1',
+            content: 'new content',
+        })
 
-    expect(inMemoryAnswersRepository.items[0]).toMatchObject({
-        content: 'new content'
-    })
+        expect(inMemoryAnswersRepository.items[0]).toMatchObject({
+            content: 'new content'
+        })
 
 
     })

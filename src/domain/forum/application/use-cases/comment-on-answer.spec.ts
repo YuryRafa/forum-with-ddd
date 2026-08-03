@@ -9,7 +9,7 @@ let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository
 let sut: CommentOnAnswer
 
-describe('Create Answer', () => {
+describe('Comment on Answer', () => {
 
     beforeEach(() => {
         inMemoryAnswersRepository = new InMemoryAnswersRepository()
@@ -18,20 +18,20 @@ describe('Create Answer', () => {
     })
 
     it('Should be able to comment on a answer', async () => {   
-    const answer = makeAnswer()
+        const answer = makeAnswer()
 
-    await inMemoryAnswersRepository.create(answer)
+        await inMemoryAnswersRepository.create(answer)
 
-    await sut.execute({
-        answerId: answer.id.toString(),
-        authorId: answer.authorId.toString(),
-        content: 'Commenting'
+        await sut.execute({
+            answerId: answer.id.toString(),
+            authorId: answer.authorId.toString(),
+            content: 'Commenting'
 
+        })
+
+        expect(inMemoryAnswerCommentsRepository.items[0]?.content).toEqual('Commenting')
+    
     })
-
-    expect(inMemoryAnswerCommentsRepository.items[0]?.content).toEqual('Commenting')
-   
-})
 
 
 }) 

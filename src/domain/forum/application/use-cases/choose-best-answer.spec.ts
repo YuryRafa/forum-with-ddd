@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryAnswersRepository } from '../../../../../test/repositories/in-memory-answers-repository.js'
 import { makeAnswer } from '../../../../../test/factories/make-answer.js'
-import { ChooseBestAnswer } from '#/domain/forum/application/use-cases/chooose-best-answer'
+import { ChooseBestAnswer } from './choose-best-answer.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { InMemoryQuestionsRepository } from '../../../../../test/repositories/in-memory-questions-repository.js'
 import { makeQuestion } from '../../../../../test/factories/make-question.js'

@@ -9,4 +9,22 @@ export class InMemoryAnswerCommentsRepository implements AnswerCommentsRepositor
         return answerComment
     }
 
+    async findById(answerCommentId: string): Promise<AnswerComment | null> {
+        const answerComment = this.items.find((item) => item.id.toString() === answerCommentId)
+
+        if (!answerComment) {
+            return null
+        }
+
+        return answerComment
+    }
+
+    async delete(answerComment: AnswerComment): Promise<void> {
+        const itemIndex = this.items.findIndex((item) => item.id.toString() === answerComment.id.toString())
+
+        if (itemIndex >= 0) {
+            this.items.splice(itemIndex, 1)
+        }
+    }
+
 }

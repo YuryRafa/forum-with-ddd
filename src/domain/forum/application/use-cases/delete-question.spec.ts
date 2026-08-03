@@ -18,18 +18,18 @@ describe('Delete Question', () => {
     })
 
     it('Should be able to get delete a question by its id', async () => {
-    const question = makeQuestion({
-        authorId: new UniqueEntityId('author-1')
-    }, new UniqueEntityId('question-1'))
+        const question = makeQuestion({
+            authorId: new UniqueEntityId('author-1')
+        }, new UniqueEntityId('question-1'))
 
-    await inMemoryQuestionsRepository.create(question)
-    
-    await sut.execute({
-        questionId: 'question-1',
-        authorId:'author-1',
-    })
+        await inMemoryQuestionsRepository.create(question)
+        
+        await sut.execute({
+            questionId: 'question-1',
+            authorId:'author-1',
+        })
 
-    expect(inMemoryQuestionsRepository.items).toHaveLength(0)
+        expect(inMemoryQuestionsRepository.items).toHaveLength(0)
 
 
 

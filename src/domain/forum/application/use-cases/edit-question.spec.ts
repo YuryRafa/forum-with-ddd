@@ -18,23 +18,23 @@ describe('Edit Question', () => {
     })
 
     it('Should be able to get edit a question by its id', async () => {
-    const question = makeQuestion({
-        authorId: new UniqueEntityId('author-1')
-    }, new UniqueEntityId('question-1'))
+        const question = makeQuestion({
+            authorId: new UniqueEntityId('author-1')
+        }, new UniqueEntityId('question-1'))
 
-    await inMemoryQuestionsRepository.create(question)
-    
-    await sut.execute({
-        questionId: 'question-1',
-        authorId:'author-1',
-        content: 'new content',
-        title: 'new title'
-    })
+        await inMemoryQuestionsRepository.create(question)
+        
+        await sut.execute({
+            questionId: 'question-1',
+            authorId:'author-1',
+            content: 'new content',
+            title: 'new title'
+        })
 
-    expect(inMemoryQuestionsRepository.items[0]).toMatchObject({
-        title: 'new title',
-        content: 'new content'
-    })
+        expect(inMemoryQuestionsRepository.items[0]).toMatchObject({
+            title: 'new title',
+            content: 'new content'
+        })
 
 
     })

@@ -9,4 +9,16 @@ export class InMemoryQuestionCommentsRepository implements QuestionsCommentsRepo
         return questionComment
     }
 
+    async findById(questionCommentId: string): Promise<QuestionComment | null> {
+        const question = this.items.find(item => item.id.toString() === questionCommentId)
+        return question ?? null
+    }
+    async delete(questionComment: QuestionComment): Promise<void> {
+        const foundIndex = this.items.findIndex(item => item.id.toString() == questionComment?.id.toString())
+        if (foundIndex === -1) {
+            return
+        }
+        this.items.splice(foundIndex, 1)
+    }
+
 }

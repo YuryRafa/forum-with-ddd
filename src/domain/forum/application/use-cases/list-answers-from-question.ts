@@ -18,7 +18,7 @@ export class ListAnswersFromQuestion {
     ) {}
 
     async execute({ questionId, page}: ListAnswersFromQuestionRequest): Promise<ListAnswersFromQuestionResponse> {
-        const answers = await this.answersRepository.getAllAnswersById(questionId, page)
+        const answers = await this.answersRepository.FindManyByQuestionId(questionId, page)
 
         if (!questionId){
             throw new Error("Question not found")

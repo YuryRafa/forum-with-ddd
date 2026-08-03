@@ -17,7 +17,7 @@ export class InMemoryAnswersRepository implements AnswersRepository {
         return answer ?? null
     }
 
-    async getAllAnswersById(questionId: string, {page}: PaginationParams): Promise<Answer[]> {
+    async FindManyByQuestionId(questionId: string, {page}: PaginationParams): Promise<Answer[]> {
         const questions = this.items
             .filter((item) => item.questionId.toString() === questionId)
             .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())

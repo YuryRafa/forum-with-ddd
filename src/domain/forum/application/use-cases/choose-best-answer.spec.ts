@@ -5,6 +5,7 @@ import { ChooseBestAnswer } from './choose-best-answer.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { InMemoryQuestionsRepository } from '../../../../../test/repositories/in-memory-questions-repository.js'
 import { makeQuestion } from '../../../../../test/factories/make-question.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
@@ -29,11 +30,12 @@ describe('Delete answer', () => {
 
         await inMemoryAnswersRepository.create(answer)
 
-        await sut.execute({
+        const result = await sut.execute({
             answerId: answer.id.toString(),
             authorId: question.authorId.toString(),
         })
 
+        expect(result.isRight()).toBe(true)
         expect(inMemoryQuestionsRepository.items[0]?.bestAnswerId.toString()).toEqual(answer.id.toString())
 
         
@@ -50,9 +52,14 @@ describe('Delete answer', () => {
 
         await inMemoryAnswersRepository.create(answer)
 
-        await expect(() => sut.execute({
+        const result = await sut.execute({
             answerId: answer.id.toString(),
             authorId: 'author-2',
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
+        if (result.isLeft()) {
+            expect(result.value).toBeInstanceOf(NotAllowedError)
+        }
     })
 })

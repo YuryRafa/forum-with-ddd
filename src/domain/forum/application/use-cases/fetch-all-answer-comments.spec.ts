@@ -40,7 +40,10 @@ describe('Fetch all answer comments', () => {
 
     const result = await sut.execute({ answerId: answer.id.toString(), page: { page: 1 } })
 
-    expect(result.answerComments).toHaveLength(10)
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.answerComments).toHaveLength(10)
+    }
   })
 
   it('should be able to paginate answer comments', async () => {
@@ -65,13 +68,18 @@ describe('Fetch all answer comments', () => {
     const firstPageResult = await sut.execute({ answerId: answer.id.toString(), page: { page: 1 } })
     const secondPageResult = await sut.execute({ answerId: answer.id.toString(), page: { page: 2 } })
 
-    const firstPageIds = firstPageResult.answerComments.map((comment) => comment.id.toString())
-    const secondPageIds = secondPageResult.answerComments.map((comment) => comment.id.toString())
+    expect(firstPageResult.isRight()).toBe(true)
+    expect(secondPageResult.isRight()).toBe(true)
 
-    expect(firstPageResult.answerComments).toHaveLength(20)
-    expect(secondPageResult.answerComments).toHaveLength(5)
-    expect(firstPageIds.some((id) => secondPageIds.includes(id))).toBe(false)
-    expect(firstPageIds).toHaveLength(20)
-    expect(secondPageIds).toHaveLength(5)
+    if (firstPageResult.isRight() && secondPageResult.isRight()) {
+      const firstPageIds = firstPageResult.value.answerComments.map((comment) => comment.id.toString())
+      const secondPageIds = secondPageResult.value.answerComments.map((comment) => comment.id.toString())
+
+      expect(firstPageResult.value.answerComments).toHaveLength(20)
+      expect(secondPageResult.value.answerComments).toHaveLength(5)
+      expect(firstPageIds.some((id) => secondPageIds.includes(id))).toBe(false)
+      expect(firstPageIds).toHaveLength(20)
+      expect(secondPageIds).toHaveLength(5)
+    }
   })
 })

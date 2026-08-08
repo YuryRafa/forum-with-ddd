@@ -5,6 +5,8 @@ import { makeAnswer } from '../../../../../test/factories/make-answer.js'
 import { makeAnswerComment } from '../../../../../test/factories/make-answer-comment.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { DeleteAnswerComment } from './delete-answer-comment.js'
+import { CommentNotFoundError } from './errors/comment-not-found-error.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository
 let inMemoryAnswersRepository: InMemoryAnswersRepository
@@ -28,11 +30,12 @@ describe('Delete comment on answer', () => {
 
         await inMemoryAnswerCommentsRepository.create(answerComment)
 
-        await sut.execute({
+        const result = await sut.execute({
             authorId: answerComment.authorId.toString(),
             answerCommentId: answerComment.id.toString()
         })
 
+        expect(result.isRight()).toBe(true)
         expect(inMemoryAnswerCommentsRepository.items.length).toEqual(0)
     })
 
@@ -47,9 +50,14 @@ describe('Delete comment on answer', () => {
 
         await inMemoryAnswerCommentsRepository.create(answerComment)
 
-        await expect(() => sut.execute({
+        const result = await sut.execute({
             authorId: 'author-2',
             answerCommentId: answerComment.id.toString()
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
+        if (result.isLeft()) {
+            expect(result.value).toBeInstanceOf(NotAllowedError)
+        }
     })
 })

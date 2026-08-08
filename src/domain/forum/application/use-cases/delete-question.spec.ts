@@ -4,6 +4,8 @@ import { InMemoryQuestionsRepository } from '../../../../../test/repositories/in
 import { makeQuestion } from '../../../../../test/factories/make-question.js'
 import { DeleteQuestion } from './delete-question.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
+import { QuestionNotFoundError } from './errors/question-not-found-error.js'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository 
 let sut: DeleteQuestion
@@ -24,11 +26,12 @@ describe('Delete Question', () => {
 
         await inMemoryQuestionsRepository.create(question)
         
-        await sut.execute({
+        const result = await sut.execute({
             questionId: 'question-1',
             authorId:'author-1',
         })
 
+        expect(result.isRight()).toBe(true)
         expect(inMemoryQuestionsRepository.items).toHaveLength(0)
 
 
@@ -42,10 +45,15 @@ describe('Delete Question', () => {
 
         await inMemoryQuestionsRepository.create(question)
         
-        await expect(() => sut.execute({
+        const result = await sut.execute({
             questionId: 'question-1',
             authorId:'author-2',
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
+        if (result.isLeft()) {
+            expect(result.value).toBeInstanceOf(NotAllowedError)
+        }
 
 
     })

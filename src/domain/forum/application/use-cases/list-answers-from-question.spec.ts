@@ -20,7 +20,7 @@ describe('Fetch Recent Answers', () => {
     beforeEach(() => {
         inMemoryAnswersRepository = new InMemoryAnswersRepository()
         inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
-        sut = new ListAnswersFromQuestion(inMemoryAnswersRepository)
+        sut = new ListAnswersFromQuestion(inMemoryAnswersRepository, inMemoryQuestionsRepository)
         
     })
 
@@ -32,14 +32,17 @@ describe('Fetch Recent Answers', () => {
         await inMemoryAnswersRepository.create(makeAnswer({questionId: question.id}))
         await inMemoryAnswersRepository.create(makeAnswer({questionId: question.id}))
 
-        const {answers} = await sut.execute({questionId: question.id.toString(), page: { page: 1}})
+        const result = await sut.execute({questionId: question.id.toString(), page: { page: 1}})
 
-        expect(answers.length).toEqual(3)
-        expect(answers).toEqual([
-            expect.objectContaining({questionId: question.id}),
-            expect.objectContaining({questionId: question.id}),
-            expect.objectContaining({questionId: question.id})
-        ])
+        expect(result.isRight()).toBe(true)
+        if (result.isRight()) {
+            expect(result.value.answers.length).toEqual(3)
+            expect(result.value.answers).toEqual([
+                expect.objectContaining({questionId: question.id}),
+                expect.objectContaining({questionId: question.id}),
+                expect.objectContaining({questionId: question.id})
+            ])
+        }
     })
     it('Should be able to list PAGINATED answers for a question', async () => {
         
@@ -56,13 +59,16 @@ describe('Fetch Recent Answers', () => {
             await inMemoryAnswersRepository.create(answer)
         })
 
-        const {answers: newAnswers} = await sut.execute({questionId: question.id.toString(), page: { page: 2}})
+        const result = await sut.execute({questionId: question.id.toString(), page: { page: 2}})
 
-        expect(newAnswers.length).toEqual(2)
-        expect(newAnswers).toEqual([
-            expect.objectContaining({questionId: question.id}),
-            expect.objectContaining({questionId: question.id})
-        ])
+        expect(result.isRight()).toBe(true)
+        if (result.isRight()) {
+            expect(result.value.answers.length).toEqual(2)
+            expect(result.value.answers).toEqual([
+                expect.objectContaining({questionId: question.id}),
+                expect.objectContaining({questionId: question.id})
+            ])
+        }
 
 
 

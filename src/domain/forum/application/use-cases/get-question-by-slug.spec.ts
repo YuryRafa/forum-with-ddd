@@ -6,6 +6,7 @@ import { Question } from '../../enterprise/entities/question.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { makeQuestion } from '../../../../../test/factories/make-question.js'
 import { Slug } from '../../enterprise/entities/value-objects/slug.js'
+import { ResourceNotFoundError } from './errors/resource-not-found-error.js'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository 
 let sut: GetQuestionBySlug
@@ -30,8 +31,11 @@ describe('Find Question', () => {
 
         const foundQuestion = await sut.execute({ slug: question.slug.value })
 
-        expect(foundQuestion.question.id).toBeTruthy()
-        expect(foundQuestion.question.content).toEqual(question.content)
+        expect(foundQuestion.isRight()).toBe(true)
+        if (foundQuestion.isRight()) {
+            expect(foundQuestion.value.question.id).toBeTruthy()
+            expect(foundQuestion.value.question.content).toEqual(question.content)
+        }
 
 
         })
@@ -46,7 +50,12 @@ describe('Find Question', () => {
         await inMemoryQuestionsRepository.create(question)
 
 
-        await expect(() => sut.execute({ slug: 'error' })).rejects.toThrow(Error)
+        const result = await sut.execute({ slug: 'error' })
+
+        expect(result.isLeft()).toBe(true)
+        if (result.isLeft()) {
+            expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+        }
 
 
         })

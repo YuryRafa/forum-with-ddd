@@ -6,6 +6,8 @@ import { makeQuestion } from '../../../../../test/factories/make-question.js'
 import { makeQuestionComment } from '../../../../../test/factories/make-question-comment.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { DeleteQuestionComment } from './delete-question-comment.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
+import { ResourceNotFoundError } from './errors/resource-not-found-error.js'
 
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
@@ -32,12 +34,13 @@ describe('Delete comment on question', () => {
 
         await inMemoryQuestionCommentsRepository.create(questionComment)
 
-        await sut.execute({
+        const result = await sut.execute({
             authorId: questionComment.authorId.toString(), 
             questionCommentId: questionComment.id.toString()
         })
 
 
+        expect(result.isRight()).toBe(true)
         expect(inMemoryQuestionCommentsRepository.items.length).toEqual(0)
    
     })
@@ -55,10 +58,15 @@ describe('Delete comment on question', () => {
 
         await inMemoryQuestionCommentsRepository.create(questionComment)
 
-        await expect(() => sut.execute({
+        const result = await sut.execute({
             authorId: 'author-2', 
             questionCommentId: questionComment.id.toString()
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
+        if (result.isLeft()) {
+            expect(result.value).toBeInstanceOf(NotAllowedError)
+        }
     
     })
 

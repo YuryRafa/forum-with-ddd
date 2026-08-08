@@ -1,14 +1,17 @@
-import { UniqueEntityId } from "../../../../core/entities/unique-entity-id.js"
-import { QuestionComment } from "../../enterprise/entities/question-comment.js"
+import { left, right, type Either } from "../../../../core/either.js"
 import type { QuestionsCommentsRepository } from "../repositories/question-comments-repository.js"
-import type { QuestionsRepository } from "../repositories/questions-repository.js"
+import { NotAllowedError } from "./errors/not-allowed-error.js"
+import { ResourceNotFoundError } from "./errors/resource-not-found-error.js"
 
 interface DeleteQuestionCommentRequest{
     authorId: string
     questionCommentId: string
 }
 
-interface DeleteQuestionCommentResponse{}
+type DeleteQuestionCommentResponse = Either<
+    ResourceNotFoundError | NotAllowedError, 
+    {}
+>
 
 
 export class DeleteQuestionComment{
@@ -20,17 +23,17 @@ export class DeleteQuestionComment{
 
 
         if (!questionComment){
-            throw new Error("Comment not found")
+            return left(new ResourceNotFoundError())
         }
 
         if (authorId !== questionComment.authorId.toString()){
-            throw new Error("No allowed")
+            return left(new NotAllowedError())
 
         }
 
         await this.questionCommentsRepository.delete(questionComment)
         
-        return {}
+        return right({})
 
     }
 }

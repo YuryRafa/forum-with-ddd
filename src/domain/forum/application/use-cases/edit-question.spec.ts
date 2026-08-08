@@ -4,6 +4,7 @@ import { InMemoryQuestionsRepository } from '../../../../../test/repositories/in
 import { makeQuestion } from '../../../../../test/factories/make-question.js'
 import { EditQuestion } from './edit-question.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository 
 let sut: EditQuestion
@@ -24,13 +25,14 @@ describe('Edit Question', () => {
 
         await inMemoryQuestionsRepository.create(question)
         
-        await sut.execute({
+        const result = await sut.execute({
             questionId: 'question-1',
             authorId:'author-1',
             content: 'new content',
             title: 'new title'
         })
 
+        expect(result.isRight()).toBe(true)
         expect(inMemoryQuestionsRepository.items[0]).toMatchObject({
             title: 'new title',
             content: 'new content'
@@ -46,12 +48,17 @@ describe('Edit Question', () => {
 
         await inMemoryQuestionsRepository.create(question)
         
-        await expect(() => sut.execute({
+        const result = await sut.execute({
             questionId: 'question-1',
             authorId:'author-2',
             content: 'new content',
             title: 'new title'
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
+        if (result.isLeft()) {
+            expect(result.value).toBeInstanceOf(NotAllowedError)
+        }
 
 
     })

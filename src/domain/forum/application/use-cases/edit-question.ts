@@ -1,5 +1,8 @@
+import { left, right, type Either } from "../../../../core/either.js";
 import type { QuestionsRepository } from "../repositories/questions-repository.js";
 import type { Question } from "../../enterprise/entities/question.js";
+import { NotAllowedError } from "./errors/not-allowed-error.js";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error.js";
 
 interface EditQuestionRequest {
     authorId: string,
@@ -9,9 +12,10 @@ interface EditQuestionRequest {
 
 }
 
-interface EditQuestionResponse{
-    question: Question
-}
+type EditQuestionResponse = Either<
+    ResourceNotFoundError | NotAllowedError,
+    { question: Question }
+>
 
 export class EditQuestion{
 
@@ -23,11 +27,11 @@ export class EditQuestion{
         const question = await this.questionsRepository.findById(questionId)
 
         if (!question){
-            throw new Error('Question not found')
+            return left(new ResourceNotFoundError())
         }
 
         if (authorId !== question.authorId.toString()){
-            throw new Error("You're not allowed to edit that question ")
+            return left(new NotAllowedError())
         }
 
         question.title = title
@@ -35,7 +39,7 @@ export class EditQuestion{
 
         await this.questionsRepository.save(question)
 
-        return {question}
+        return right({question})
     }
 }
 

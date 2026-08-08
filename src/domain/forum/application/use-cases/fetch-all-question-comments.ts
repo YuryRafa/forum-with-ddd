@@ -1,16 +1,19 @@
+import { left, right, type Either } from "../../../../core/either.js"
 import { QuestionComment } from "../../enterprise/entities/question-comment.js"
 import type { PaginationParams } from "../../../../core/repositories/pagination-params.js"
 import type { QuestionsCommentsRepository } from "../repositories/question-comments-repository.js"
 import type { QuestionsRepository } from "../repositories/questions-repository.js"
+import { ResourceNotFoundError } from "./errors/resource-not-found-error.js"
 
 interface FetchQuestionCommentsRequest{
     questionId: string
     page: PaginationParams
 }
 
-interface FetchQuestionCommentsResponse{
-    questionComments: QuestionComment[]
-}
+type FetchQuestionCommentsResponse = Either<
+    ResourceNotFoundError,
+    { questionComments: QuestionComment[] }
+>
 
 
 export class FetchQuestionComments{
@@ -23,13 +26,13 @@ export class FetchQuestionComments{
         const question = await this.questionsRepository.findById(questionId)
 
         if (!question){
-            throw new Error("Question not found")
+            return left(new ResourceNotFoundError())
         }
 
 
         const questionComments = await this.questionCommentsRepository.findManyByQuestionId(question.id.toString(), page)
         
-        return {questionComments}
+        return right({questionComments})
 
     }
 }

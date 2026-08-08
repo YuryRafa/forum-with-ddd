@@ -1,7 +1,9 @@
+import { left, right, type Either } from "../../../../core/either.js"
 import { UniqueEntityId } from "../../../../core/entities/unique-entity-id.js"
 import { QuestionComment } from "../../enterprise/entities/question-comment.js"
 import type { QuestionsCommentsRepository } from "../repositories/question-comments-repository.js"
 import type { QuestionsRepository } from "../repositories/questions-repository.js"
+import { ResourceNotFoundError } from "./errors/resource-not-found-error.js"
 
 interface CommentOnQuestionRequest{
     authorId: string
@@ -9,9 +11,10 @@ interface CommentOnQuestionRequest{
     content: string
 }
 
-interface CommentOnQuestionResponse{
-    questionComment: QuestionComment
-}
+type CommentOnQuestionResponse = Either<
+    ResourceNotFoundError,
+    { questionComment: QuestionComment }
+>
 
 
 export class CommentOnQuestion{
@@ -24,7 +27,7 @@ export class CommentOnQuestion{
         const question = await this.questionsRepository.findById(questionId)
 
         if (!question){
-            throw new Error("Question not found")
+            return left(new ResourceNotFoundError())
         }
 
         const questionComment = QuestionComment.create({
@@ -35,7 +38,7 @@ export class CommentOnQuestion{
 
         await this.questionCommentsRepository.create(questionComment)
         
-        return {questionComment}
+        return right({questionComment})
 
     }
 }

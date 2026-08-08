@@ -37,7 +37,10 @@ describe('Fetch all question comments', () => {
 
         const result = await sut.execute({questionId: question.id.toString(), page: { page: 1 }})
 
-        expect(result.questionComments).toHaveLength(10)
+        expect(result.isRight()).toBe(true)
+        if (result.isRight()) {
+            expect(result.value.questionComments).toHaveLength(10)
+        }
     })
 
     it('should be able to paginate question comments', async () => {
@@ -59,14 +62,19 @@ describe('Fetch all question comments', () => {
         const firstPageResult = await sut.execute({ questionId: question.id.toString(), page: { page: 1 } })
         const secondPageResult = await sut.execute({ questionId: question.id.toString(), page: { page: 2 } })
 
-        const firstPageIds = firstPageResult.questionComments.map((comment) => comment.id.toString())
-        const secondPageIds = secondPageResult.questionComments.map((comment) => comment.id.toString())
+        expect(firstPageResult.isRight()).toBe(true)
+        expect(secondPageResult.isRight()).toBe(true)
 
-        expect(firstPageResult.questionComments).toHaveLength(20)
-        expect(secondPageResult.questionComments).toHaveLength(5)
-        expect(firstPageIds.some((id) => secondPageIds.includes(id))).toBe(false)
-        expect(firstPageIds).toHaveLength(20)
-        expect(secondPageIds).toHaveLength(5)
+        if (firstPageResult.isRight() && secondPageResult.isRight()) {
+            const firstPageIds = firstPageResult.value.questionComments.map((comment) => comment.id.toString())
+            const secondPageIds = secondPageResult.value.questionComments.map((comment) => comment.id.toString())
+
+            expect(firstPageResult.value.questionComments).toHaveLength(20)
+            expect(secondPageResult.value.questionComments).toHaveLength(5)
+            expect(firstPageIds.some((id) => secondPageIds.includes(id))).toBe(false)
+            expect(firstPageIds).toHaveLength(20)
+            expect(secondPageIds).toHaveLength(5)
+        }
     })
 })
 

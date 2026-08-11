@@ -13,7 +13,8 @@ let sut: ChooseBestAnswer
 
 describe('Delete answer', () => {
     beforeEach(() => {
-        inMemoryAnswersRepository = new InMemoryAnswersRepository()
+        const inMemoryAnswerAttachmentsRepository = { items: [], findManyByAnswerId: async () => [], deleteManyByAnswerId: async () => {} }
+        inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
         inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
         sut = new ChooseBestAnswer(inMemoryQuestionsRepository, inMemoryAnswersRepository)
     })

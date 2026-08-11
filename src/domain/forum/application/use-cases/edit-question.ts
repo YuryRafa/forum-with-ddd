@@ -5,7 +5,7 @@ import { NotAllowedError } from "./errors/not-allowed-error.js";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error.js";
 import type { QuestionAttachmentsRepository } from "../repositories/question-attachments-repository.js";
 import { QuestionAttachmentList } from "../../enterprise/entities/question-attatchment-list.js";
-import { QuestionAttachment } from "../../enterprise/entities/answer-attachment.js";
+import { QuestionAttachment } from "../../enterprise/entities/question-attachment.js";
 import { UniqueEntityId } from "../../../../core/entities/unique-entity-id.js";
 
 interface EditQuestionRequest {

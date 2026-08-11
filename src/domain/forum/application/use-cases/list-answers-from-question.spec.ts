@@ -18,7 +18,8 @@ let sut: ListAnswersFromQuestion
 describe('Fetch Recent Answers', () => {
 
     beforeEach(() => {
-        inMemoryAnswersRepository = new InMemoryAnswersRepository()
+        const inMemoryAnswerAttachmentsRepository = { items: [], findManyByAnswerId: async () => [], deleteManyByAnswerId: async () => {} }
+        inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
         inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
         sut = new ListAnswersFromQuestion(inMemoryAnswersRepository, inMemoryQuestionsRepository)
         

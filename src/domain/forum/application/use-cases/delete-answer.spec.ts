@@ -1,16 +1,20 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryAnswersRepository } from '../../../../../test/repositories/in-memory-answers-repository.js'
+import { InMemoryAnswerAttachmentsRepository } from '../../../../../test/repositories/in-memory-answer-attachments-repository.js'
 import { makeAnswer } from '../../../../../test/factories/make-answer.js'
+import { makeAnswerAttachment } from '../../../../../test/factories/make-answer-attachment.js'
 import { DeleteAnswer } from './delete-answer.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { NotAllowedError } from './errors/not-allowed-error.js'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let sut: DeleteAnswer
 
 describe('Delete answer', () => {
     beforeEach(() => {
-        inMemoryAnswersRepository = new InMemoryAnswersRepository()
+        inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository()
+        inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
         sut = new DeleteAnswer(inMemoryAnswersRepository)
     })
 
@@ -21,6 +25,13 @@ describe('Delete answer', () => {
         }, new UniqueEntityId('answer-1'))
 
         await inMemoryAnswersRepository.create(answer)
+
+        inMemoryAnswerAttachmentsRepository.items.push(
+            makeAnswerAttachment({
+                answerId: answer.id,
+                attachmentId: new UniqueEntityId('1')
+            })
+        )
 
         const result = await sut.execute({
             answerId: 'answer-1',

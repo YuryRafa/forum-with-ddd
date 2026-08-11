@@ -13,8 +13,9 @@ let sut: DeleteAnswerComment
 
 describe('Delete comment on answer', () => {
     beforeEach(() => {
+        const inMemoryAnswerAttachmentsRepository = { items: [], findManyByAnswerId: async () => [], deleteManyByAnswerId: async () => {} }
         inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository()
-        inMemoryAnswersRepository = new InMemoryAnswersRepository()
+        inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
         sut = new DeleteAnswerComment(inMemoryAnswerCommentsRepository)
     })
 

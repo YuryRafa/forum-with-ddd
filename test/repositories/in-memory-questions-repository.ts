@@ -1,9 +1,14 @@
 import type { PaginationParams } from "../../src/core/repositories/pagination-params.js";
+import type { QuestionAttachmentsRepository } from "../../src/domain/forum/application/repositories/question-attachments-repository.js";
 import type { QuestionsRepository } from "../../src/domain/forum/application/repositories/questions-repository.js";
 import type { Question } from "../../src/domain/forum/enterprise/entities/question.js";
 
 export class InMemoryQuestionsRepository implements QuestionsRepository {
     public items: Question[] = []
+
+    constructor(
+        private questionAttachmentsRepository: QuestionAttachmentsRepository
+    ) {}
 
     async create(question: Question): Promise<Question> {
         this.items.push(question)
@@ -26,6 +31,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
             return
         }
         this.items.splice(foundIndex, 1)
+        this.questionAttachmentsRepository.deleteManyByQuestionId(question.id.toString())
     }
 
     async findManyRecent({page}: PaginationParams): Promise<Question[]> {

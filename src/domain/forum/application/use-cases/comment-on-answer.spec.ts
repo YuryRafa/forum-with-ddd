@@ -12,7 +12,8 @@ let sut: CommentOnAnswer
 describe('Comment on Answer', () => {
 
     beforeEach(() => {
-        inMemoryAnswersRepository = new InMemoryAnswersRepository()
+        const inMemoryAnswerAttachmentsRepository = { items: [], findManyByAnswerId: async () => [], deleteManyByAnswerId: async () => {} }
+        inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
         inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository()
         sut = new CommentOnAnswer(inMemoryAnswerCommentsRepository, inMemoryAnswersRepository)
     })

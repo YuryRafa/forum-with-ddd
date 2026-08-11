@@ -1,5 +1,5 @@
 import type { QuestionAttachmentsRepository } from "../../src/domain/forum/application/repositories/question-attachments-repository.js";
-import type { QuestionAttachment } from "../../src/domain/forum/enterprise/entities/answer-attachment.js";
+import type { QuestionAttachment } from "../../src/domain/forum/enterprise/entities/question-attachment.js";
 
 export class InMemoryQuestionAttachmentsRepository implements QuestionAttachmentsRepository {
     
@@ -10,6 +10,14 @@ export class InMemoryQuestionAttachmentsRepository implements QuestionAttachment
         .filter((item) => item.questionId.toString() === questionId)
         
         return questionAttachments
+    }
+
+    async deleteManyByQuestionId(questionId: string): Promise<void> {
+        const questionAttachments = this.items
+        .filter((item) => item.questionId.toString() !== questionId)
+
+        this.items = questionAttachments
+        
     }
     
 }

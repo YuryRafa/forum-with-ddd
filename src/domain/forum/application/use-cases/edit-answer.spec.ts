@@ -5,16 +5,20 @@ import { makeAnswer } from '../../../../../test/factories/make-answer.js'
 import { EditAnswer } from './edit-answer.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { NotAllowedError } from './errors/not-allowed-error.js'
+import { InMemoryAnswerAttachmentsRepository } from '../../../../../test/repositories/in-memory-answer-attachments-repository.js'
+import { makeAnswerAttachment } from '../../../../../test/factories/make-answer-attachment.js'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository 
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let sut: EditAnswer
 
 
 describe('Edit answer', () => {
 
     beforeEach(() => {
-        inMemoryAnswersRepository = new InMemoryAnswersRepository()
-        sut = new EditAnswer(inMemoryAnswersRepository)
+        inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentsRepository()
+        inMemoryAnswersRepository = new InMemoryAnswersRepository(inMemoryAnswerAttachmentsRepository)
+        sut = new EditAnswer(inMemoryAnswersRepository, inMemoryAnswerAttachmentsRepository)
         
     })
 
@@ -25,18 +29,34 @@ describe('Edit answer', () => {
         }, new UniqueEntityId('answer-1'))
 
         await inMemoryAnswersRepository.create(answer)
+
+        inMemoryAnswerAttachmentsRepository.items.push(
+            makeAnswerAttachment({
+                answerId: answer.id,
+                attachmentId: new UniqueEntityId('1')
+            }),
+            makeAnswerAttachment({
+                answerId: answer.id,
+                attachmentId: new UniqueEntityId('2')
+            }),
+        )
         
         const result = await sut.execute({
             answerId: 'answer-1',
             authorId:'author-1',
             content: 'new content',
+            attachmentsIds: ['1', '3'],
         })
 
         expect(result.isRight()).toBe(true)
-        expect(inMemoryAnswersRepository.items[0]).toMatchObject({
-            content: 'new content'
-        })
-
+        if (result.isRight()) {
+            const { answer } = result.value
+            expect(answer.content).toEqual('new content')
+            expect(inMemoryAnswersRepository.items[0]?.attachments.currentItems).toEqual([
+                expect.objectContaining({ attachmentId: new UniqueEntityId('1') }),
+                expect.objectContaining({ attachmentId: new UniqueEntityId('3') }),
+            ])
+        }
 
     })
 
@@ -52,6 +72,7 @@ describe('Edit answer', () => {
             answerId: 'answer-1',
             authorId:'author-2',
             content: 'new content',
+            attachmentsIds: []
         })
 
         expect(result.isLeft()).toBe(true)

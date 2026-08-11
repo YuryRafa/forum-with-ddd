@@ -1,7 +1,7 @@
 import { UniqueEntityId } from "#/core/entities/unique-entity-id"
 import { Question } from "#/domain/forum/enterprise/entities/question";
 import { right, type Either } from "../../../../core/either.js";
-import { QuestionAttachment } from "../../enterprise/entities/answer-attachment.js";
+import { QuestionAttachment } from "../../enterprise/entities/question-attachment.js";
 import { QuestionAttachmentList } from "../../enterprise/entities/question-attatchment-list.js";
 import type { QuestionsRepository } from "../repositories/questions-repository.js";
 

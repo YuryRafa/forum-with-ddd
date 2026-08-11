@@ -1,5 +1,6 @@
 import { UniqueEntityId } from "#/core/entities/unique-entity-id";
 import { Answer } from "#/domain/forum/enterprise/entities/answer";
+import { right, type Either } from "../../../../core/either.js";
 import type { AnswersRepository } from "../repositories/answers-repository.js";
 
 interface AnswerQuestionRequest {
@@ -10,9 +11,8 @@ interface AnswerQuestionRequest {
 
 }
 
-interface AnswerQuestionResponse {
-    answer: Answer
-}
+type AnswerQuestionResponse = Either<Error, {answer: Answer}>
+
 
 export class AnswerQuestion{
 
@@ -29,7 +29,7 @@ export class AnswerQuestion{
         await this.answersRepository.create(answer)
 
         
-        return {answer}
+        return right({answer})
     }
 }
 

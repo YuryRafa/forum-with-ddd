@@ -5,7 +5,6 @@ import { makeAnswer } from '../../../../../test/factories/make-answer.js'
 import { makeAnswerComment } from '../../../../../test/factories/make-answer-comment.js'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id.js'
 import { DeleteAnswerComment } from './delete-answer-comment.js'
-import { CommentNotFoundError } from './errors/comment-not-found-error.js'
 import { NotAllowedError } from './errors/not-allowed-error.js'
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository

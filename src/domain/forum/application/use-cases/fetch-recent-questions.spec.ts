@@ -37,15 +37,21 @@ describe('Fetch Recent Questions', () => {
             createdAt: new Date(2026, 0, 19)
         }))
 
-        const { questions } = await sut.execute({ page: 1 })
+        const result = await sut.execute({ page: 1 })
 
-        expect(questions).toEqual([
-            expect.objectContaining({ createdAt: new Date(2026, 0, 23) }),
-            expect.objectContaining({ createdAt: new Date(2026, 0, 20) }),
-            expect.objectContaining({ createdAt: new Date(2026, 0, 19) }),
-            expect.objectContaining({ createdAt: new Date(2026, 0, 18) })
-        ])
-        expect(questions).toHaveLength(4)
+        expect(result.isRight()).toBe(true)
+
+        if (result.isRight()) {
+            const { questions } = result.value
+
+            expect(questions).toEqual([
+                expect.objectContaining({ createdAt: new Date(2026, 0, 23) }),
+                expect.objectContaining({ createdAt: new Date(2026, 0, 20) }),
+                expect.objectContaining({ createdAt: new Date(2026, 0, 19) }),
+                expect.objectContaining({ createdAt: new Date(2026, 0, 18) })
+            ])
+            expect(questions).toHaveLength(4)
+        }
     })
 
    it('Should be able to paginate the recent questions', async () => {
@@ -60,11 +66,15 @@ describe('Fetch Recent Questions', () => {
             await inMemoryQuestionsRepository.create(question)
         })
 
-        const { questions: recentQuestions } = await sut.execute({ page: 2 })
+        const result = await sut.execute({ page: 2 })
 
-        console.log(recentQuestions)
+        expect(result.isRight()).toBe(true)
 
-        expect(recentQuestions).toHaveLength(2)
+        if (result.isRight()) {
+            const { questions: recentQuestions } = result.value
+
+            expect(recentQuestions).toHaveLength(2)
+        }
 
     })
 

@@ -30,7 +30,7 @@ export class AnswerQuestion{
             questionId: new UniqueEntityId(questionId)
         })
 
-        const answerAttachments = attachmentIds.map((attachmentId) => {
+         const answerAttachments = attachmentIds.map((attachmentId) => {
             return AnswerAttachment.create({
                 attachmentId: new UniqueEntityId(attachmentId),
                 answerId: answer.id

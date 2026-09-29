@@ -2,6 +2,7 @@ import type { PaginationParams } from "../../src/core/repositories/pagination-pa
 import type { AnswersRepository } from "../../src/domain/forum/application/repositories/answers-repository.js";
 import type { AnswerAttachmentsRepository } from "../../src/domain/forum/application/repositories/answer-attachments-repository.js";
 import type { Answer } from "../../src/domain/forum/enterprise/entities/answer.js";
+import { DomainEvents } from "../../src/core/events/domain-events.js";
 
 
 export class InMemoryAnswersRepository implements AnswersRepository {
@@ -14,6 +15,9 @@ export class InMemoryAnswersRepository implements AnswersRepository {
 
     async create(answer: Answer): Promise<Answer> {
         this.items.push(answer)
+        
+        DomainEvents.dispatchEventsForAggregate(answer.id)
+
         return answer
     }
 

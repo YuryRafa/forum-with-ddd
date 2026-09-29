@@ -4,14 +4,14 @@ import { Notification } from "../../enterprise/entities/notification.js"
 import type { NotificationsRepository } from "../repositories/notifications-repository.js";
 
 
-interface SendNotificationRequest {
+export interface SendNotificationRequest {
     recipientId: string
     title: string
     content: string
 
 }
 
-type SendNotificationResponse = Either<Error, { notification: Notification }>
+export type SendNotificationResponse = Either<Error, { notification: Notification }>
 export class SendNotification{
 
     constructor (
